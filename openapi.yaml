@@ -1,0 +1,178 @@
+openapi: 3.0.3
+info:
+  title: Ticketing API (mock)
+  version: 0.1.0
+  description: >
+    A small mock ticket-purchase service used to demonstrate API test
+    automation. All data is invented. Endpoints are being added in stages;
+    auth, seat holds, and orders are planned.
+servers:
+  - url: http://localhost:3000
+    description: Local instance (npm start)
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      operationId: getHealth
+      responses:
+        '200':
+          description: Service is up
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /events:
+    get:
+      summary: List events
+      description: Paginated, filterable list of events.
+      operationId: listEvents
+      parameters:
+        - name: page
+          in: query
+          description: 1-based page number.
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: Page size (max 100).
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: city
+          in: query
+          description: Filter by city (case-insensitive).
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Filter by event status.
+          schema:
+            type: string
+            enum: [on_sale, sold_out, cancelled]
+      responses:
+        '200':
+          description: A page of events
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventList'
+
+  /events/{id}:
+    get:
+      summary: Get a single event
+      operationId: getEvent
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: evt_001
+      responses:
+        '200':
+          description: The event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '404':
+          description: No event with that id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Event:
+      type: object
+      required:
+        - id
+        - name
+        - venue
+        - city
+        - startsAt
+        - priceCents
+        - currency
+        - totalSeats
+        - availableSeats
+        - status
+      properties:
+        id:
+          type: string
+          example: evt_001
+        name:
+          type: string
+          example: Midnight Synth Collective
+        venue:
+          type: string
+          example: The Glass Hall
+        city:
+          type: string
+          example: Austin
+        startsAt:
+          type: string
+          format: date-time
+          example: '2026-09-12T02:00:00.000Z'
+        priceCents:
+          type: integer
+          minimum: 0
+          example: 4500
+        currency:
+          type: string
+          example: USD
+        totalSeats:
+          type: integer
+          minimum: 0
+          example: 200
+        availableSeats:
+          type: integer
+          minimum: 0
+          example: 200
+        status:
+          type: string
+          enum: [on_sale, sold_out, cancelled]
+          example: on_sale
+
+    EventList:
+      type: object
+      required: [data, page, limit, total, totalPages]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 10
+        total:
+          type: integer
+          example: 6
+        totalPages:
+          type: integer
+          example: 1
+
+    Error:
+      type: object
+      required: [error, message]
+      properties:
+        error:
+          type: string
+          example: not_found
+        message:
+          type: string
+          example: No event with id evt_999
