@@ -1,5 +1,5 @@
 {
-  "name": "ticketing-api-test-reference",
+  "name": "ticketing-api-automation",
   "version": "0.1.0",
   "description": "API test automation for a mock ticketing service, using Jest and SuperTest.",
   "main": "server/server.js",

@@ -1,9 +1,8 @@
-# Ticketing API — Test Automation Reference
+# Ticketing API — Test Automation
 
-[![CI](https://github.com/sush-dev-git/ticketing-api-test-reference/actions/workflows/ci.yml/badge.svg)](https://github.com/sush-dev-git/ticketing-api-test-reference/actions/workflows/ci.yml)
+[![CI](https://github.com/sush-dev-git/ticketing-api-automation/actions/workflows/ci.yml/badge.svg)](https://github.com/sush-dev-git/ticketing-api-automation/actions/workflows/ci.yml)
 
-A reference architecture for **API test automation** — how I structure a suite,
-not just a pile of assertions. The suite is demonstrated against a small,
+How I structure **API test automation**. The suite runs against a small,
 self-hosted mock **ticket-purchase service** (Node + Express) so the tests can
 exercise things a public placeholder API can't: real state, validation,
 auth-gated writes, and idempotent purchases.
@@ -51,7 +50,7 @@ npm start           # run the mock service on http://localhost:3000
 ## Project structure
 
 ```
-ticketing-api-test-reference/
+ticketing-api-automation/
 ├── server/                   # the mock service (system under test)
 │   ├── app.js                # Express app factory (injectable store)
 │   ├── server.js             # entry point for `npm start`
