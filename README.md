@@ -2,39 +2,37 @@
 
 [![CI](https://github.com/sush-dev-git/ticketing-api-automation/actions/workflows/ci.yml/badge.svg)](https://github.com/sush-dev-git/ticketing-api-automation/actions/workflows/ci.yml)
 
-How I structure **API test automation**. The suite runs against a small,
-self-hosted mock **ticket-purchase service** (Node + Express) so the tests can
-exercise things a public placeholder API can't: real state, validation,
-auth-gated writes, and idempotent purchases.
+API test automation for a small mock ticket-purchase service (Node + Express).
+The service is self-hosted so the tests can cover things a public placeholder API
+can't: real state, validation, auth-gated writes, and idempotent purchases.
 
-> **Why a self-hosted service instead of a public test API?** Testing a service
-> I control means the suite is fully deterministic — no third-party rate limits,
-> no secrets, no flaky network in CI — and it unlocks the *interesting* tests
-> (state lifecycle, idempotency, header propagation) that a read-only mock API
-> simply can't express. The service is deliberately thin; the test architecture
-> is the point.
+I went with a service I control rather than a public test API for two reasons.
+First, the suite stays deterministic in CI: no third-party rate limits, no
+secrets, no flaky network. Second, it makes room for the tests that actually
+matter here (state lifecycle, idempotency, header propagation), which a
+read-only API can't express. The service itself is kept small on purpose.
 
-## What this demonstrates
+## What's covered
 
-- **Schema-as-contract validation.** Every response is checked against a JSON
-  Schema via a custom `toMatchSchema` (ajv) matcher — a renamed field or changed
-  type fails loudly in the suite instead of silently breaking a consumer.
-- **In-process, deterministic testing.** SuperTest drives the Express app
-  directly (no port binding, no network), so the suite is fast and reproducible.
-  Set `BASE_URL` to point the *same* suite at a deployed instance for smoke tests.
-- **Dependency-injected app/store.** The app is a factory with an injectable
-  store, so every test runs against clean, isolated state.
-- **Negative and edge cases as first-class citizens** — not just the happy path.
+- **Schema validation.** Every response is checked against a JSON Schema with a
+  custom `toMatchSchema` (ajv) matcher, so a renamed field or changed type is
+  caught in the suite rather than by a downstream consumer.
+- **In-process tests.** SuperTest drives the Express app directly (no port, no
+  network), which keeps runs fast and repeatable. Set `BASE_URL` to run the same
+  suite against a deployed instance for smoke tests.
+- **Injected store.** The app is a factory with an injectable store, so each test
+  runs against clean, isolated state.
+- **Negative and edge cases**, not just the happy path.
 
-## The system under test
+## The service under test
 
-A mock ticketing service with entirely invented data (fictional events, venues,
-and cities). Endpoints land incrementally:
+A mock ticketing service with invented data (made-up events, venues, and cities).
+Endpoints are being added in stages:
 
 | Endpoint | Status |
 | --- | --- |
-| `GET /events` (paginated, filterable) | ✅ |
-| `GET /events/:id` | ✅ |
+| `GET /events` (paginated, filterable) | done |
+| `GET /events/:id` | done |
 | `POST /auth/login` (bearer token) | planned |
 | `POST /events/:id/holds` (seat holds with TTL) | planned |
 | `POST /orders` (idempotent purchase, oversell prevention) | planned |
@@ -51,7 +49,7 @@ npm start           # run the mock service on http://localhost:3000
 
 ```
 ticketing-api-automation/
-├── server/                   # the mock service (system under test)
+├── server/                   # the mock service under test
 │   ├── app.js                # Express app factory (injectable store)
 │   ├── server.js             # entry point for `npm start`
 │   ├── store.js              # in-memory store + seed data
@@ -63,7 +61,7 @@ ticketing-api-automation/
 │   │   ├── client.js         # SuperTest client (in-process or BASE_URL)
 │   │   └── schemas.js        # JSON Schemas + ajv validation helper
 │   └── suites/
-│       └── events.test.js    # events read-path coverage
+│       └── events.test.js    # events read tests
 ├── jest.setup.js             # registers the toMatchSchema matcher
 └── .github/workflows/ci.yml
 ```
