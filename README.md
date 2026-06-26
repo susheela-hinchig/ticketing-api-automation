@@ -1,6 +1,6 @@
 # Ticketing API — Test Automation
 
-[![CI](https://github.com/sush-dev-git/ticketing-api-automation/actions/workflows/ci.yml/badge.svg)](https://github.com/sush-dev-git/ticketing-api-automation/actions/workflows/ci.yml)
+[![CI](https://github.com/susheela-hinchig/ticketing-api-automation/actions/workflows/ci.yml/badge.svg)](https://github.com/susheela-hinchig/ticketing-api-automation/actions/workflows/ci.yml)
 
 API test automation for a small mock ticket-purchase service (Node + Express).
 The service is self-hosted so the tests can cover things a public placeholder API
@@ -17,7 +17,7 @@ read-only API can't express. The service itself is kept small on purpose.
 The API is described by an OpenAPI spec ([`openapi.yaml`](openapi.yaml)), which
 is the single source of truth for the contract.
 
-- **Browse online:** https://sush-dev-git.github.io/ticketing-api-automation/
+- **Browse online:** https://susheela-hinchig.github.io/ticketing-api-automation/
   (rendered with Redoc, read-only — the mock service isn't deployed, so there's
   no live backend to call).
 - **Run locally:** `npm start`, then open http://localhost:3000/docs for Swagger
